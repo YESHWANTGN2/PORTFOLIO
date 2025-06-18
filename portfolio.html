@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nick Williams - Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" />
+   <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   
+  <style>
+    /* Reset and Base Styles */
+    :root {
+      --primary-color: hsl(342, 92%, 46%);
+      --background-dark: #1f2937;
+      --surface-color: #273549;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --card-bg: #1e293b;
+      --border-color: #394b61;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--background-dark);
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 1400px;
+      height: 90vh;
+      max-height: 800px;
+      display: grid;
+      grid-template-columns: 80px 320px 1fr;
+      gap: 24px;
+      background-color: var(--background-dark);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      background-color: var(--surface-color);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 16px 0;
+      user-select: none;
+    }
+
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .sidebar .nav-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: color 0.3s ease;
+      padding: 8px 0;
+    }
+
+    .sidebar .nav-link i {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: var(--primary-color);
+    }
+
+    /* Left Panel (Profile) */
+    .left-panel {
+      background-color: var(--surface-color);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .left-panel .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background-image: url('https://placehold.co/120x120/22d3ee/1f2937?text=NW');
+      background-size: cover;
+      background-position: center;
+      border: 4px solid var(--primary-color);
+      margin-top: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3);
+    }
+
+    .left-panel .name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .left-panel .title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+
+    .left-panel .social-icons {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .left-panel .social-icons a {
+      font-size: 20px;
+      transition: color 0.3s ease;
+    }
+
+    .left-panel .social-icons a:hover {
+      color: var(--primary-color);
+    }
+
+    .left-panel .links-row {
+      border-top: 1px solid var(--border-color);
+      padding-top: 20px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .left-panel .link-button {
+      background-color: var(--card-bg);
+      color: var(--text-primary);
+      padding: 12px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .left-panel .link-button:hover {
+        background-color: var(--primary-color);
+        color: var(--background-dark);
+    }
+
+    /* Right Panel (Content) */
+    .right-panel {
+      background-color: var(--surface-color);
+      border-radius: 20px;
+      padding: 32px;
+      overflow-y: auto;
+    }
+    
+    .right-panel::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .right-panel::-webkit-scrollbar-thumb {
+        background-color: var(--card-bg);
+        border-radius: 3px;
+    }
+
+    .content-section {
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2.section-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+      position: relative;
+      padding-bottom: 8px;
+    }
+
+    h2.section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background-color: var(--primary-color);
+        border-radius: 2px;
+    }
+
+    h2.section-title span {
+      color: var(--primary-color);
+    }
+
+    /* Hero (Home) Section */
+    #home-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
+    }
+    .home-title {
+        font-size: 42px;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+    .home-subtitle {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 16px;
+    }
+    .home-description {
+        font-size: 15px;
+        line-height: 1.7;
+        max-width: 500px;
+        margin-bottom: 24px;
+    }
+    .home-buttons {
+        display: flex;
+        gap: 16px;
+    }
+    .btn {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: var(--background-dark);
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(34, 211, 238, 0.3);
+    }
+    .btn-secondary {
+        background-color: var(--card-bg);
+        color: var(--text-primary);
+    }
+    .btn-secondary:hover {
+        background-color: #334155;
+    }
+
+
+    /* About Section */
+    #about-section p {
+        line-height: 1.7;
+        font-size: 15px;
+        margin-bottom: 28px;
+        max-width: 600px;
+    }
+
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-item {
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-item i {
+      font-size: 28px;
+      color: var(--primary-color);
+      width: 40px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--text-primary);
+    }
+
+    /* Skills Section */
+    .skills-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .skills-header {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 1rem;
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        transition: background-color 0.3s;
+    }
+
+    .skills-header:hover {
+        background-color: #334155;
+    }
+
+    .skills-icon {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-right: 1rem;
+    }
+    
+    .skills-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .skills-subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .skills-arrow {
+        font-size: 1.5rem;
+        margin-left: auto;
+        transition: transform 0.4s;
+    }
+    
+    .skills-header.skills-active .skills-arrow {
+        transform: rotate(-180deg);
+    }
+
+    .skills-group[data-content] {
+        display: none;
+    }
+    
+    .skills-group.skills-active[data-content] {
+        display: block;
+        animation:-appear 0.5s;
+    }
+    @keyframes -appear{from{opacity:0}to{opacity:1}}
+
+
+    .skills-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+        background-color: var(--card-bg);
+        border-radius: 12px;
+    }
+
+    .skills-titles {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .skills-name, .skills-number {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .skills-bar, .skills-percentage {
+        height: 6px;
+        border-radius: 3px;
+    }
+    
+    .skills-bar {
+        background-color: var(--surface-color);
+    }
+
+    .skills-percentage {
+        display: block;
+        background-color: var(--primary-color);
+    }
+    
+    .matrix-charts {
+        margin-top: 2rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        background-color: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+    .chart-box{
+        text-align: center;
+    }
+    .chart-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+.tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 8px;
+            font: 14px sans-serif;
+            background: #333;
+            color: #fff;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 1000;
+        }
+
+        /* Treemap Specific Styles */
+        .treemap-node rect {
+            stroke: #fff;
+            fill-opacity: 0.8;
+            transition: fill-opacity 0.2s ease-in-out;
+        }
+        .treemap-node rect:hover {
+            fill-opacity: 1;
+        }
+        .treemap-node text {
+            pointer-events: none;
+            font-size: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+            fill: white;
+            font-weight: bold;
+        }
+        .treemap-header text {
+            font-size: 14px;
+            font-weight: bold;
+            fill: #4a5568; /* Darker grey for category labels */
+        }
+
+       
+    .container {
+      background: rgba(30, 41, 59, 0.8);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      backdrop-filter: saturate(180%) blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin: 0;
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      user-select: none;
+    }
+
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Tooltip styling override for Chart.js (dark theme) */
+    .chartjs-tooltip {
+      background: rgba(0,0,0,0.7);
+      color: #e0e7ff;
+      border-radius: 4px;
+      font-size: 14px;
+      padding: 6px 10px;
+      pointer-events: none;
+      position: absolute;
+      transform: translate(-50%, 0);
+      white-space: nowrap;
+      user-select: none;
+      z-index: 1000;
+    }
+
+    /* Projects Section */
+    .work-filters {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+    
+    .work-item {
+        cursor: pointer;
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .work-item:hover {
+        color: var(--primary-color);
+    }
+    
+    .work-item.active-work {
+        background-color: var(--primary-color);
+        color: var(--background-dark);
+    }
+
+    .work-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 24px;
+    }
+
+    .work-card {
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .work-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .work-img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+    }
+    
+    .work-content {
+        padding: 16px;
+    }
+
+    .work-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+    
+    .work-category {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--primary-color);
+    }
+
+    /* Contact Section */
+    .contact-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+    }
+    .contact-card {
+        background-color: var(--card-bg);
+        padding: 24px;
+        border-radius: 16px;
+        text-align: center;
+    }
+    .contact-card-icon {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    .contact-card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+    .contact-card-data {
+        font-size: 0.9rem;
+    }
+    .contact-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .input-container {
+        position: relative;
+    }
+    .input {
+        width: 100%;
+        padding: 1rem;
+        background-color: var(--card-bg);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+    .input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+    .contact-form textarea.input {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .app-container {
+            grid-template-columns: 80px 1fr;
+            grid-template-rows: auto;
+        }
+        .left-panel {
+            display: none; 
+        }
+        .skills-container, .matrix-charts {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        body {
+            padding: 0;
+            align-items: flex-start;
+        }
+        .app-container {
+            grid-template-columns: 1fr;
+            height: auto;
+            max-height: none;
+            gap: 0;
+            border-radius: 0;
+        }
+        .sidebar {
+            grid-row: 2;
+            flex-direction: row;
+            justify-content: space-around;
+            border-radius: 0;
+            padding: 8px 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            background-color: var(--surface-color);
+        }
+        .right-panel {
+            border-radius: 0;
+            height: calc(100vh - 60px); /* Adjust for sidebar height */
+            padding: 24px 16px 80px 16px;
+        }
+        h2.section-title {
+            font-size: 22px;
+        }
+        .summary-stats {
+            grid-template-columns: 1fr;
+        }
+        .home-title {
+            font-size: 32px;
+        }
+        .home-subtitle {
+            font-size: 18px;
+        }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-container" role="main">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" aria-label="Sidebar navigation">
+      <nav role="navigation">
+        <a href="#about" class="nav-link" data-target="about-section" title="About">
+          <i class="fas fa-user"></i>
+        </a>
+        <a href="#skills" class="nav-link" data-target="skills-section" title="Skills">
+          <i class="fas fa-code"></i>
+        </a>
+        <a href="#projects" class="nav-link" data-target="projects-section" title="Projects">
+          <i class="fas fa-briefcase"></i>
+        </a>
+        <a href="#contact" class="nav-link" data-target="contact-section" title="Contact">
+            <i class="fas fa-paper-plane"></i>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Left Panel -->
+    <section class="left-panel" aria-label="Profile and contact information">
+      <div class="avatar" role="img" aria-label="Avatar image of Nick Williams"></div>
+      <div class="name">Nick Williams</div>
+      <div class="title">VLSI & AI Developer</div>
+        <p class="home-description">
+            I design and develop high-performance hardware and intelligent software solutions, specializing in VLSI design, machine learning, and Python.
+        </p>
+      <div class="social-icons" aria-label="Social media links">
+        <a href="#" aria-label="GitHub profile"><i class="fab fa-github"></i></a>
+        <a href="#" aria-label="LinkedIn profile"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" aria-label="Twitter profile"><i class="fab fa-twitter"></i></a>
+      </div>
+      <div class="links-row">
+        <a href="#" class="link-button">
+          <i class="fas fa-file-download"></i> My Resume
+        </a>
+         <a href="#projects" class="link-button contact-me-btn">
+                <i class="fas fa-briefcase"></i> My Projects
+            </a>
+        <a href="#contact" class="link-button contact-me-btn">
+          <i class="fas fa-paper-plane"></i> Contact Me
+        </a>
+      </div>
+    </section>
+
+    <!-- Right Panel -->
+    <main class="right-panel" aria-label="Main content">
+      
+      
+      <!-- About Section -->
+      <section id="about-section" class="content-section">
+        <h2 class="section-title">About <span>Me</span></h2>
+        <p>
+          I'm thrilled to tell you a bit about myself. With a strong foundation in both VLSI design and modern software development, I specialize in creating efficient hardware solutions and intelligent software applications. I have extensive experience in <strong>Verilog, SystemVerilog, Python, and AI/ML frameworks</strong>. If you're looking for a motivated and versatile engineer to join your team, let's connect!
+        </p>
+        <div class="summary-stats">
+          <div class="stat-item">
+            <i class="fas fa-microchip"></i>
+            <div>
+              <span class="stat-number">10+</span>
+              <span class="stat-label">VLSI Projects</span>
+            </div>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-brain"></i>
+            <div>
+              <span class="stat-number">5+</span>
+              <span class="stat-label">Years of Experience</span>
+            </div>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-rocket"></i>
+            <div>
+              <span class="stat-number">15+</span>
+              <span class="stat-label">Total Projects</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Skills Section -->
+      <section id="skills-section" class="content-section">
+        <h2 class="section-title" data-heading="My Abilities">My Experience</h2>
+        <div class="skills-container">
+            <div class="skills-tabs">
+              <div class="skills-header" data-target="#vlsi">
+                <i class="uil uil-circuit skills-icon"></i>
+                <div>
+                  <h1 class="skills-title">VLSI Design</h1>
+                  <span class="skills-subtitle">More than 3 years</span>
+                </div>
+                <i class="uil uil-angle-down skills-arrow"></i>
+              </div>
+              <div class="skills-header" data-target="#ai">
+                <i class="uil uil-robot skills-icon"></i>
+                <div>
+                  <h1 class="skills-title">Artificial Intelligence</h1>
+                  <span class="skills-subtitle">More than 2 years</span>
+                </div>
+                <i class="uil uil-angle-down skills-arrow"></i>
+              </div>
+              <div class="skills-header" data-target="#ml">
+                <i class="uil uil-brain skills-icon"></i>
+                <div>
+                  <h1 class="skills-title">Machine Learning</h1>
+                  <span class="skills-subtitle">More than 2 years</span>
+                </div>
+                <i class="uil uil-angle-down skills-arrow"></i>
+              </div>
+              <div class="skills-header" data-target="#python">
+                <i class="uil uil-python skills-icon"></i>
+                <div>
+                  <h1 class="skills-title">Python Development</h1>
+                  <span class="skills-subtitle">More than 4 years</span>
+                </div>
+                <i class="uil uil-angle-down skills-arrow"></i>
+              </div>
+            </div>
+            <div class="skills-content">
+              <div class="skills-group" data-content id="vlsi">
+                <div class="skills-list">
+                  <div class="skills-data">
+                    <div class="skills-titles">
+                      <h3 class="skills-name">Verilog</h3>
+                      <span class="skills-number">85%</span>
+                    </div>
+                    <div class="skills-bar">
+                      <span class="skills-percentage" style="width: 85%;"></span>
+                    </div>
+                  </div>
+                  <div class="skills-data">
+                    <div class="skills-titles">
+                      <h3 class="skills-name">SystemVerilog</h3>
+                      <span class="skills-number">80%</span>
+                    </div>
+                    <div class="skills-bar">
+                      <span class="skills-percentage" style="width: 80%;"></span>
+                    </div>
+                  </div>
+                  <div class="skills-data">
+                    <div class="skills-titles">
+                      <h3 class="skills-name">VHDL</h3>
+                      <span class="skills-number">70%</span>
+                    </div>
+                    <div class="skills-bar">
+                      <span class="skills-percentage" style="width: 70%;"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="skills-group" data-content id="ai">
+                <div class="skills-list">
+                  <div class="skills-data">
+                    <div class="skills-titles">
+                      <h3 class="skills-name">Deep Learning</h3>
+                      <span class="skills-number">80%</span>
+                    </div>
+                    <div class="skills-bar">
+                      <span class="skills-percentage" style="width: 80%;"></span>
+                    </div>
+                  </div>
+                  <div class="skills-data">
+                    <div class="skills-titles">
+                      <h3 class="skills-name">NLP</h3>
+                      <span class="skills-number">75%</span>
+                    </div>
+                    <div class="skills-bar">
+                      <span class="skills-percentage" style="width: 75%;"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="skills-group" data-content id="ml">
+                <div class="skills-list">
+                  <div class="skills-data">
+                    <div class="skills-titles">
+                      <h3 class="skills-name">Scikit-learn</h3>
+                      <span class="skills-number">85%</span>
+                    </div>
+                    <div class="skills-bar">
+                      <span class="skills-percentage" style="width: 85%;"></span>
+                    </div>
+                  </div>
+                  <div class="skills-data">
+                    <div class="skills-titles">
+                      <h3 class="skills-name">TensorFlow</h3>
+                      <span class="skills-number">80%</span>
+                    </div>
+                    <div class="skills-bar">
+                      <span class="skills-percentage" style="width: 80%;"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="skills-group" data-content id="python">
+                <div class="skills-list">
+                  <div class="skills-data">
+                    <div class="skills-titles">
+                      <h3 class="skills-name">NumPy</h3>
+                      <span class="skills-number">90%</span>
+                    </div>
+                    <div class="skills-bar">
+                      <span class="skills-percentage" style="width: 90%;"></span>
+                    </div>
+                  </div>
+                  <div class="skills-data">
+                    <div class="skills-titles">
+                      <h3 class="skills-name">Pandas</h3>
+                      <span class="skills-number">85%</span>
+                    </div>
+                    <div class="skills-bar">
+                      <span class="skills-percentage" style="width: 85%;"></span>
+                    </div>
+                  </div>
+                  <div class="skills-data">
+                    <div class="skills-titles">
+                      <h3 class="skills-name">Matplotlib</h3>
+                      <span class="skills-number">80%</span>
+                    </div>
+                    <div class="skills-bar">
+                      <span class="skills-percentage" style="width: 80%;"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        
+        <div id="treemap_container" class="chart-container">
+        <h2 class="chart-title">Python Libraries Treemap</h2>
+    </div>
+
+   <div class="container">
+    <h1>Professional Skills Radar</h1>
+    <canvas id="skillsRadar" aria-label="Radar chart showing professional skills scores" role="img"></canvas>
+  </div>
+      </section>
+
+      <!-- Projects Section -->
+      <section id="projects-section" class="content-section">
+        <h2 class="section-title">Recent <span>Projects</span></h2>
+        <div class="work-filters">
+            <span class="work-item active-work" data-filter="all">All</span>
+            <span class="work-item" data-filter=".vlsi">VLSI</span>
+            <span class="work-item" data-filter=".aiml">AIML</span>
+            <span class="work-item" data-filter=".python">Python Developer</span>
+        </div>
+        <div class="work-container">
+            <div class="work-card mix vlsi">
+                <img src="https://placehold.co/300x180/0ea5e9/ffffff?text=ASIC+Chip" alt="ASIC Chip Design" class="work-img">
+                <div class="work-content">
+                    <h3 class="work-title">ASIC Chip Design</h3>
+                    <span class="work-category">VLSI</span>
+                </div>
+            </div>
+            <div class="work-card mix aiml">
+                <img src="https://placehold.co/300x180/14b8a6/ffffff?text=AI+Vision" alt="AI Vision System" class="work-img">
+                 <div class="work-content">
+                    <h3 class="work-title">AI Vision System</h3>
+                    <span class="work-category">AIML</span>
+                </div>
+            </div>
+            <div class="work-card mix python">
+                <img src="https://placehold.co/300x180/f97316/ffffff?text=Automation" alt="Python Automation" class="work-img">
+                 <div class="work-content">
+                    <h3 class="work-title">Data Automation</h3>
+                    <span class="work-category">Python Developer</span>
+                </div>
+            </div>
+            <div class="work-card mix aiml">
+                <img src="https://placehold.co/300x180/8b5cf6/ffffff?text=NLP+App" alt="NLP Application" class="work-img">
+                 <div class="work-content">
+                    <h3 class="work-title">NLP Chatbot</h3>
+                    <span class="work-category">AIML</span>
+                </div>
+            </div>
+            <div class="work-card mix vlsi">
+                <img src="https://placehold.co/300x180/ec4899/ffffff?text=FPGA" alt="FPGA Prototyping" class="work-img">
+                 <div class="work-content">
+                    <h3 class="work-title">FPGA Prototyping</h3>
+                    <span class="work-category">VLSI</span>
+                </div>
+            </div>
+            <div class="work-card mix python">
+                <img src="https://placehold.co/300x180/ef4444/ffffff?text=Dashboard" alt="Data Dashboard" class="work-img">
+                 <div class="work-content">
+                    <h3 class="work-title">Analytics Dashboard</h3>
+                    <span class="work-category">Python Developer</span>
+                </div>
+            </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section id="contact-section" class="content-section">
+        <h2 class="section-title">Get In <span>Touch</span></h2>
+        <div class="contact-container">
+            <div>
+                <div class="contact-card">
+                    <i class="uil uil-envelope-edit contact-card-icon"></i>
+                    <h3 class="contact-card-title">Email</h3>
+                    <span class="contact-card-data">nick.williams@email.com</span>
+                </div>
+                 <div class="contact-card" style="margin-top: 1.5rem;">
+                    <i class="uil uil-map-marker contact-card-icon"></i>
+                    <h3 class="contact-card-title">Location</h3>
+                    <span class="contact-card-data">San Francisco, USA</span>
+                </div>
+            </div>
+            <form action="#" class="contact-form">
+                <div class="input-container">
+                    <input type="text" name="name" class="input" placeholder="Your Name" required>
+                </div>
+                <div class="input-container">
+                    <input type="email" name="email" class="input" placeholder="Your Email" required>
+                </div>
+                <div class="input-container">
+                    <textarea name="message" class="input" placeholder="Your Message" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Send Message</button>
+            </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const navLinks = document.querySelectorAll('.sidebar .nav-link');
+      const contentSections = document.querySelectorAll('.content-section');
+      const projectFilters = document.querySelectorAll('.work-item');
+      const projectCards = document.querySelectorAll('.work-card');
+      const skillsHeaders = document.querySelectorAll('.skills-header');
+      
+      // --- Section Navigation ---
+      const activateSection = (targetId) => {
+          navLinks.forEach(l => {
+            l.classList.toggle('active', l.dataset.target === targetId);
+          });
+          contentSections.forEach(section => {
+            section.classList.toggle('active', section.id === targetId);
+          });
+      };
+
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.dataset.target;
+          activateSection(targetId);
+        });
+      });
+      
+      // --- Handle CTA buttons ---
+      document.querySelectorAll('.contact-me-btn').forEach(btn => {
+         btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            activateSection('contact-section');
+         });
+      });
+
+      document.querySelectorAll('.projects-btn').forEach(btn => {
+         btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            activateSection('projects-section');
+         });
+      });
+
+      // --- Skills Accordion ---
+      skillsHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const target = document.querySelector(header.dataset.target);
+            
+            // Close other open accordions
+            skillsHeaders.forEach(h => {
+                if (h !== header) {
+                    h.classList.remove('skills-active');
+                }
+            });
+            document.querySelectorAll('.skills-group[data-content]').forEach(group => {
+                if(group !== target){
+                    group.classList.remove('skills-active');
+                }
+            });
+
+            // Toggle the clicked accordion
+            header.classList.toggle('skills-active');
+            target.classList.toggle('skills-active');
+        });
+      });
+      // Set the first skill as active by default
+      if(skillsHeaders.length > 0) {
+        skillsHeaders[0].classList.add('skills-active');
+        document.querySelector(skillsHeaders[0].dataset.target).classList.add('skills-active');
+      }
+
+      // --- Project Filtering ---
+      projectFilters.forEach(filter => {
+          filter.addEventListener('click', () => {
+              const filterValue = filter.dataset.filter;
+              
+              projectFilters.forEach(f => f.classList.remove('active-work'));
+              filter.classList.add('active-work');
+
+              projectCards.forEach(card => {
+                  if (filterValue === 'all' || card.classList.contains(filterValue.substring(1))) {
+                      card.style.display = 'block';
+                      card.style.animation = 'fadeIn 0.5s';
+                  } else {
+                      card.style.display = 'none';
+                  }
+              });
+          });
+      });
+      
+        // Tooltip element
+        const tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip");
+
+        // --- Treemap Chart ---
+        const treemapData = {
+            "name": "root",
+            "children": [
+                { name: "Data Science", children: [ {name: "NumPy", value: 10}, {name: "Pandas", value: 20} ]},
+                { name: "Web Dev", children: [ {name: "Django", value: 15}, {name: "Flask", value: 12}, {name: "FastAPI", value: 10} ]},
+                { name: "Data Viz", children: [ {name: "Matplotlib", value: 10}, {name: "Seaborn", value: 7}, {name: "Plotly", value: 6} ]},
+                { name: "ML Libs", children: [ {name: "Scikit-learn", value: 20}, {name: "TensorFlow", value: 30}, {name: "PyTorch", value: 25} ]}
+            ]
+        };
+
+        const treemapWidth = 900;
+        const treemapHeight = 500;
+
+        const svgTreemap = d3.select("#treemap_container")
+            .append("svg")
+            .attr("viewBox", `0 0 ${treemapWidth} ${treemapHeight}`)
+            .attr("preserveAspectRatio", "xMidYMid meet")
+            .style("display", "block")
+            .style("margin", "auto");
+
+        const treemapLayout = d3.treemap()
+            .size([treemapWidth, treemapHeight])
+            .paddingInner(2)
+            .paddingOuter(4)
+            .paddingTop(25); // Space for header labels
+
+        const rootTreemap = d3.hierarchy(treemapData)
+            .sum(d => d.value)
+            .sort((a, b) => b.value - a.value);
+
+        treemapLayout(rootTreemap);
+
+        const colorTreemap = d3.scaleOrdinal()
+            .domain(treemapData.children.map(d => d.name))
+            .range(['#0ea5e9', '#14b8a6', '#f97316', '#8b5cf6']); // Based on customColorScale
+
+        const nodesTreemap = svgTreemap.selectAll(".treemap-node")
+            .data(rootTreemap.leaves())
+            .enter().append("g")
+            .attr("class", "treemap-node")
+            .attr("transform", d => `translate(${d.x0},${d.y0})`);
+
+        nodesTreemap.append("rect")
+            .attr("width", d => d.x1 - d.x0)
+            .attr("height", d => d.y1 - d.y0)
+            .attr("fill", d => colorTreemap(d.parent.data.name))
+            .attr("rx", 6)
+            .attr("ry", 6)
+            .on("mouseover", function(event, d) {
+                d3.select(this).transition().duration(100).attr("fill-opacity", 1);
+                tooltip.html(`Library: <strong>${d.data.name}</strong><br>Domain: <strong>${d.parent.data.name}</strong><br>Value: ${d.data.value}`)
+                    .style("opacity", 0.9)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 28) + "px");
+            })
+            .on("mouseout", function() {
+                d3.select(this).transition().duration(100).attr("fill-opacity", 0.8);
+                tooltip.style("opacity", 0);
+            });
+
+        nodesTreemap.append("text")
+            .attr("x", 5)
+            .attr("y", 18)
+            .text(d => (d.x1 - d.x0 > 50 && d.y1 - d.y0 > 25) ? d.data.name : "")
+            .attr("alignment-baseline", "middle");
+
+        // Add headers for parent categories
+        const headersTreemap = svgTreemap.selectAll(".treemap-header")
+            .data(rootTreemap.descendants().filter(d => d.depth === 1))
+            .enter().append("g")
+            .attr("class", "treemap-header")
+            .attr("transform", d => `translate(${d.x0},${d.y0})`);
+
+        headersTreemap.append("text")
+            .attr("x", 4)
+            .attr("y", 15) // Position header text inside the padding area
+            .text(d => d.data.name);
+            const canvas = document.getElementById('radarChart');
+            const ctx = canvas.getContext('2d');
+
+        });
+    </script>
+    
+  <script>
+    // Setup radar chart data and config
+    const labels = ['Creativity', 'Technical Skill', 'Problem Solving', 'Communication', 'Teamwork'];
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: 'Skill Level',
+        data: [85, 90, 75, 80, 95],
+        fill: true,
+        backgroundColor: 'rgba(107, 99, 246, 0.2)',
+        borderColor: '#6b63f6',
+        pointBackgroundColor: '#6b63f6',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: '#6b63f6',
+        borderWidth: 3,
+        tension: 0, // Sharpen the radar chart lines by removing curves
+      }]
+    };
+
+    const config = {
+      type: 'radar',
+      data: data,
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1,
+        scales: {
+          r: {
+            angleLines: {
+              color: '#334155',
+            },
+            grid: {
+              color: '#334155'
+            },
+            suggestedMin: 0,
+            suggestedMax: 100,
+            ticks: {
+              color: '#cbd5e1',
+              stepSize: 20,
+              backdropColor: 'transparent',
+              font: {
+                size: 12,
+                weight: 'normal'
+              },
+              showLabelBackdrop: true
+            },
+            pointLabels: {
+              color: '#e0e7ff',
+              font: {
+                size: 14,
+                weight: '600'
+              }
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#a5b4fc',
+              font: {
+                size: 14,
+                weight: 'bold'
+              }
+            }
+          },
+          tooltip: {
+            enabled: true,
+            backgroundColor: 'rgba(107, 99, 246, 0.85)',
+            titleColor: '#e0e7ff',
+            bodyColor: '#e0e7ff',
+            cornerRadius: 4,
+            padding: 8,
+            displayColors: true,
+            yAlign: 'bottom'
+          }
+        },
+        elements: {
+          line: {
+            borderJoinStyle: 'round'
+          }
+        },
+        animation: {
+          duration: 900,
+          easing: 'easeInOutQuad'
+        }
+      },
+    };
+
+    // Render chart
+    const ctx = document.getElementById('skillsRadar').getContext('2d');
+    new Chart(ctx, config);
+  </script>
+
+</body>
+
+</html>
